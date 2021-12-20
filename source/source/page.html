@@ -1,0 +1,730 @@
+
+<!-- saved from url=(0055)https://fdt-cdti-weatherstation.web.app/meter-page.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>
+		<link rel="icon" href="https://fdt-cdti-weatherstation.web.app/favicon.ico" type="image/x-icon">
+		<title>
+			หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา
+		</title>
+		
+		    <script type="text/javascript" src="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/angular.js.download"></script>
+    		<script src="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/firebase.js.download"></script>
+    	<script>
+
+
+        // Initialize Firebase
+        var firebaseRef = {};
+        var temp_curf=0;
+        var hum_curf=0;
+        var light_curf=0;
+        var pm_curf=0;
+        var pressure_curf=0;
+        var rain_curf=0;
+        var wspeed_curf=0;
+        var wdir_curf=0;
+
+        angular.module('firebaseApp', []).service('firebaseService', function () {
+            // ���ҧ Function ���� init Firebase ��ҡѺ app ���
+            this.initFirebase = function () {
+                var config = {
+
+
+                    apiKey: "AIzaSyBK3JOumbdGNjbZaULe62iM-wyqf6zr6-o",
+                    authDomain: "fdt-cdti-weatherstation.firebaseapp.com",
+                    databaseURL: "https://fdt-cdti-weatherstation.firebaseio.com",
+                    storageBucket: "fdt-cdti-weatherstation.appspot.com",
+                    messagingSenderId: "522537223601",
+
+                };
+                firebase.initializeApp(config);
+                firebaseRef = firebase.database().ref("Set").limitToLast(12);
+
+                // สำหรับค่าเฉลี่ย ค่าสูงสุด และต่ำสุด
+                firebaseRef_temp = firebase.database().ref("Push/temp").limitToLast(1440);
+                firebaseRef_hum = firebase.database().ref("Push/hum").limitToLast(1440);
+                firebaseRef_light = firebase.database().ref("Push/light").limitToLast(1440);
+                firebaseRef_pm = firebase.database().ref("Push/pm10").limitToLast(1440);
+                firebaseRef_pressure = firebase.database().ref("Push/baroPress").limitToLast(1440);
+                firebaseRef_rain = firebase.database().ref("Push/accRainfall").limitToLast(1440);
+                firebaseRef_wspeed = firebase.database().ref("Push/winSpeed").limitToLast(1440);
+                firebaseRef_wdir = firebase.database().ref("Push/winDir").limitToLast(1440);
+
+            }
+
+            //eTest.append('<li>'+'hello'+'</li>)
+            //eTest.append('<li>'+'hello'+'</li>)
+
+            // ���ҧ Function ������ event �ͧ Firebase
+            this.eventFirebase = function () {
+                firebaseRef.on('value', function (data) {
+                	const datas = Object.values(data.val());
+                	console.log(datas);
+
+                    var elementOL = angular.element(document.getElementById('Set'));
+                    const lastIndex = datas.length-1;
+
+					// สำหรับโชว์ค่าปัจจุบัน
+                    document.getElementById('temp_cur').innerHTML = 'ปัจจุบัน : '+ datas[8];
+					temp_curf = datas[8];
+					document.getElementById('hum_cur').innerHTML = 'ปัจจุบัน : '+ datas[5];
+					hum_curf = datas[5];
+					document.getElementById('light_cur').innerHTML = 'ปัจจุบัน : '+ datas[6];
+					light_curf = datas[6];
+					document.getElementById('pm_cur').innerHTML = 'ปัจจุบัน : '+ datas[7];
+					pm_curf = datas[7];
+					document.getElementById('pressure_cur').innerHTML = 'ปัจจุบัน : '+ datas[2];
+					pressure_curf = datas[2];
+					document.getElementById('rain_cur').innerHTML = 'ปัจจุบัน : '+ datas[1];
+					rain_curf = datas[1];
+					document.getElementById('wspeed_cur').innerHTML = 'ปัจจุบัน : '+ datas[11];
+					wspeed_curf = datas[11];
+					document.getElementById('wdir_cur').innerHTML = 'ปัจจุบัน : '+ datas[10];
+					wdir_curf = datas[10];
+					year_bhudda = datas[3]['year'] + 543;
+
+					if (datas[3]['min'] == 1) { temp_min = '01';}
+					else if (datas[3]['min'] == 2) { temp_min = '02';}
+					else if (datas[3]['min'] == 3) { temp_min = '03';}
+					else if (datas[3]['min'] == 4) { temp_min = '04';}
+					else if (datas[3]['min'] == 5) { temp_min = '05';}
+					else if (datas[3]['min'] == 6) { temp_min = '06';}
+					else if (datas[3]['min'] == 7) { temp_min = '07';}
+					else if (datas[3]['min'] == 8) { temp_min = '08';}
+					else if (datas[3]['min'] == 9) { temp_min = '09';}
+					else { temp_min = datas[3]['min'];}
+
+					document.getElementById('date_cur').innerHTML = 'ข้อมูลล่าสุด : '+ datas[3]['day'] + '/' + datas[3]['mon'] + '/' + year_bhudda + ' ' + datas[3]['hour'] + ':' + temp_min + ' น.';
+					elementOL.empty();
+                })
+
+
+                // สำหรับค่าอุณหภูมิ เฉลี่ย สูงสุด ต่ำสุด
+                firebaseRef_temp.on('value', function (data) {
+                	const datas_temp = Object.values(data.val());
+                	console.log(datas_temp);
+					// สำหรับโชว์ค่าอุณหภูมิ
+					var sum = 0;
+					var mean_temp = 0;
+					var max_temp = 0;
+					var min_temp = 100;
+					for (i = 0 ; i < datas_temp.length ; i++){
+						sum += datas_temp[i];
+						if(max_temp < datas_temp[i]){ max_temp = datas_temp[i];}
+						if(min_temp > datas_temp[i]){ min_temp = datas_temp[i];}					
+					}
+					mean_temp = sum / datas_temp.length;
+                    document.getElementById('temp_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_temp.toFixed(2);
+                    document.getElementById('temp_min').innerHTML = 'ค่าน้อยสุด : '+ min_temp.toFixed(2);
+                    document.getElementById('temp_max').innerHTML = 'ค่ามากสุด : '+ max_temp.toFixed(2);
+					})
+                // สำหรับค่าความชื้น
+                firebaseRef_hum.on('value', function (data) {
+                	const datas_hum = Object.values(data.val());
+                	console.log(datas_hum);
+					// สำหรับโชว์ค่าความชื้น
+					var sum_hum = 0;
+					var mean_hum = 0;
+					var max_hum = 0;
+					var min_hum = 100;
+					for (i = 0 ; i < datas_hum.length ; i++){
+						sum_hum += datas_hum[i];
+						if(max_hum < datas_hum[i]){ max_hum = datas_hum[i];}
+						if(min_hum > datas_hum[i]){ min_hum = datas_hum[i];}					
+					}
+					mean_hum = sum_hum / datas_hum.length;
+                    document.getElementById('hum_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_hum.toFixed(2);
+                    document.getElementById('hum_min').innerHTML = 'ค่าน้อยสุด : '+ min_hum.toFixed(2);
+                    document.getElementById('hum_max').innerHTML = 'ค่ามากสุด : '+ max_hum.toFixed(2);
+					})
+                // สำหรับค่าแสง
+                firebaseRef_light.on('value', function (data) {
+                	const datas_light = Object.values(data.val());
+                	console.log(datas_light);
+					// สำหรับโชว์ค่าแสง
+					var sum_light = 0;
+					var mean_light = 0;
+					var max_light = 0;
+					var min_light = 100;
+					for (i = 0 ; i < datas_light.length ; i++){
+						sum_light += datas_light[i];
+						if(max_light < datas_light[i]){ max_light = datas_light[i];}
+						if(min_light > datas_light[i]){ min_light = datas_light[i];}					
+					}
+					mean_light = sum_light / datas_light.length;
+                    document.getElementById('light_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_light.toFixed(2);
+                    document.getElementById('light_min').innerHTML = 'ค่าน้อยสุด : '+ min_light.toFixed(2);
+                    document.getElementById('light_max').innerHTML = 'ค่ามากสุด : '+ max_light.toFixed(2);
+					})
+                // สำหรับค่าpm
+                firebaseRef_pm.on('value', function (data) {
+                	const datas_pm = Object.values(data.val());
+                	console.log(datas_pm);
+					// สำหรับโชว์ค่า pm
+					var sum_pm = 0;
+					var mean_pm = 0;
+					var max_pm = 0;
+					var min_pm = 100;
+					for (i = 0 ; i < datas_pm.length ; i++){
+						sum_pm += datas_pm[i];
+						if(max_pm < datas_pm[i]){ max_pm = datas_pm[i];}
+						if(min_pm > datas_pm[i]){ min_pm = datas_pm[i];}					
+					}
+					mean_pm = sum_pm / datas_pm.length;
+                    document.getElementById('pm_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_pm.toFixed(2);
+                    document.getElementById('pm_min').innerHTML = 'ค่าน้อยสุด : '+ min_pm.toFixed(2);
+                    document.getElementById('pm_max').innerHTML = 'ค่ามากสุด : '+ max_pm.toFixed(2);
+					})
+
+                // สำหรับค่า pressure
+                firebaseRef_pressure.on('value', function (data) {
+                	const datas_pressure = Object.values(data.val());
+                	console.log(datas_pressure);
+					// สำหรับโชว์ค่า pressure
+					var sum_pressure = 0;
+					var mean_pressure = 0;
+					var max_pressure = 0;
+					var min_pressure = 100;
+					for (i = 0 ; i < datas_pressure.length ; i++){
+						sum_pressure += datas_pressure[i];
+						if(max_pressure < datas_pressure[i]){ max_pressure = datas_pressure[i];}
+						if(min_pressure > datas_pressure[i]){ min_pressure = datas_pressure[i];}					
+					}
+					mean_pressure = sum_pressure / datas_pressure.length;
+                    document.getElementById('pressure_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_pressure.toFixed(2);
+                    document.getElementById('pressure_min').innerHTML = 'ค่าน้อยสุด : '+ min_pressure.toFixed(2);
+                    document.getElementById('pressure_max').innerHTML = 'ค่ามากสุด : '+ max_pressure.toFixed(2);
+					})
+
+                // สำหรับค่า rain
+                firebaseRef_rain.on('value', function (data) {
+                	const datas_rain = Object.values(data.val());
+                	console.log(datas_rain);
+					// สำหรับโชว์ค่า rain
+					var sum_rain = 0;
+					var mean_rain = 0;
+					var max_rain = 0;
+					var min_rain = 100;
+					for (i = 0 ; i < datas_rain.length ; i++){
+						sum_rain += datas_rain[i];
+						if(max_rain < datas_rain[i]){ max_rain = datas_rain[i];}
+						if(min_rain > datas_rain[i]){ min_rain = datas_rain[i];}					
+					}
+					mean_rain = sum_rain / datas_rain.length;
+                    document.getElementById('rain_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_rain.toFixed(2);
+                    document.getElementById('rain_min').innerHTML = 'ค่าน้อยสุด : '+ min_rain.toFixed(2);
+                    document.getElementById('rain_max').innerHTML = 'ค่ามากสุด : '+ max_rain.toFixed(2);
+					})
+
+                // สำหรับค่า ความเร็วลม
+                firebaseRef_wspeed.on('value', function (data) {
+                	const datas_wspeed = Object.values(data.val());
+                	console.log(datas_wspeed);
+					// สำหรับโชว์ค่า ความเร็วลม
+					var sum_wspeed = 0;
+					var mean_wspeed = 0;
+					var max_wspeed = 0;
+					var min_wspeed = 100;
+					for (i = 0 ; i < datas_wspeed.length ; i++){
+						sum_wspeed += datas_wspeed[i];
+						if(max_wspeed < datas_wspeed[i]){ max_wspeed = datas_wspeed[i];}
+						if(min_wspeed > datas_wspeed[i]){ min_wspeed = datas_wspeed[i];}					
+					}
+					mean_wspeed = sum_wspeed / datas_wspeed.length;
+                    document.getElementById('wspeed_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_wspeed.toFixed(2);
+                    document.getElementById('wspeed_min').innerHTML = 'ค่าน้อยสุด : '+ min_wspeed.toFixed(2);
+                    document.getElementById('wspeed_max').innerHTML = 'ค่ามากสุด : '+ max_wspeed.toFixed(2);
+					})
+
+                // สำหรับค่า ทิศทางลม
+                firebaseRef_wdir.on('value', function (data) {
+                	const datas_wdir = Object.values(data.val());
+                	console.log(datas_wdir);
+					// สำหรับโชว์ค่า ทิศทางลม
+					var sum_wdir = 0;
+					var mean_wdir = 0;
+					var max_wdir = 0;
+					var min_wdir = 100;
+					for (i = 0 ; i < datas_wdir.length ; i++){
+						sum_wdir += datas_wdir[i];
+						if(max_wdir < datas_wdir[i]){ max_wdir = datas_wdir[i];}
+						if(min_wdir > datas_wdir[i]){ min_wdir = datas_wdir[i];}					
+					}
+					mean_wdir = sum_wdir / datas_wdir.length;
+                    document.getElementById('wdir_mean').innerHTML = 'ค่าเฉลี่ย : '+ mean_wdir.toFixed(2);
+                    document.getElementById('wdir_min').innerHTML = 'ค่าน้อยสุด : '+ min_wdir.toFixed(2);
+                    document.getElementById('wdir_max').innerHTML = 'ค่ามากสุด : '+ max_wdir.toFixed(2);
+					})
+
+
+
+            }
+            this.push = function (title, content) { }
+        }).controller('firebaseCtrl', function (firebaseService) {
+            // ���¡��ҹ firebaseService ���������ҧ���
+            firebaseService.initFirebase();
+            firebaseService.eventFirebase();
+        })
+
+
+
+
+
+    	</script>
+
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/css2" rel="stylesheet">
+		<link href="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/jquerysctipttop.css" rel="stylesheet" type="text/css">
+		<link href="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/css2(1)" rel="stylesheet">
+		<link rel="stylesheet" href="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/font-awesome.min.css">
+	<style>
+		html {
+		  scroll-behavior: smooth;
+		}
+		#section1 {
+  			height: 720px;
+		}
+
+		#section2 {
+ 			height: 720px;
+		}
+		body {font-family: "Lato", sans-serif;}
+		.sidebar {
+		  height: 100%;
+		  width: 250px;
+		  position: fixed;
+		  z-index: 1;
+		  top: 0;
+		  left: 0;
+		  background-color: #293462;
+		  overflow-x: hidden;
+		  padding-top: 16px;
+		}
+
+		.sidebar a {
+		  padding: 6px 8px 6px 16px;
+		  text-decoration: none;
+		  font-size: 20px;
+		  color: #FFFFFF;
+		  display: block;
+		}
+
+		.sidebar a:hover {
+		  color:  #111;
+		}
+
+		.main {
+		  margin-left: 250px; /* Same as the width of the sidenav */
+		  padding: 0px 10px;
+
+		}
+
+		@media screen and (max-height: 450px) {
+		  .sidebar {padding-top: 15px;}
+		  .sidebar a {font-size: 18px;}
+		}
+
+    .gauge {
+      width: 320px;
+      height: 240px;
+    }
+	.box4x1 {
+      float: left;
+      width: 300px;
+      height: 200px;
+      box-sizing: border-box;
+      background-color: white;
+    }
+    .box4x2 {
+      float: left;
+      width: 300px;
+      height: 280px;
+      box-sizing: border-box;
+      background-color: white;
+    }
+    .boxspace {
+      float: left;
+      width: 1200px;
+      height: 20px;
+      box-sizing: border-box;
+      background-color:#F8F8F8;;
+    }
+	</style></head>
+
+	
+	<body style="background-color:#F8F8F8;" ng-app="firebaseApp" class="ng-scope">
+
+		<div class="sidebar" style="margin-top:270px">
+
+			<div style="margin-top:10px;background-color:orange">
+				<a href="https://fdt-cdti-weatherstation.web.app/meter-page.html#section1"><i class="fa fa-fw fa-home"></i> หน้าหลัก </a>
+			</div>
+			<div style="margin-top:5px">
+				<a href="https://fdt-cdti-weatherstation.web.app/graph-page.html"><i class="fa fa-bar-chart" style="margin-left:4px"></i> แผนภูมิ </a>
+			</div>
+			<div style="margin-top:5px">
+				<a onclick="notavailable()" style="cursor: pointer;"><i class="fa fa-fw fa-user"></i> ตั้งค่าผู้ใช้งาน </a>
+			</div>
+			<div style="margin-top:5px">
+				<a href="https://fdt-cdti-weatherstation.web.app/index.html"><i class="fa fa-sign-out" style="margin-left:7px"></i> ออกจากระบบ </a>
+			</div>
+		</div>
+
+		<div class="sidebar" style="background-color: lightgoldenrodyellow;height:250px">
+			<img src="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/logo-chitralada.png" style=" margin-left: 40px;margin-top: 5px" alt="Girl in a jacket" width="170">
+		</div>
+
+		<div class="main">
+			<div style="width:1200px" id="section1">
+
+				<h2 style="color:#505050;margin-left:75px;margin-top:30px;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 2.5em">สถานีตรวจวัดอากาศ (Weather Station)</h2>
+				<h5 style="text-align:left;margin-left:75px;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="date_cur">ข้อมูลล่าสุด : undefined/undefined/NaN undefined:undefined น.</h5>
+
+				<div style="background-color: white;">
+
+					<div style="background-color: white;">
+						<div class="box4x1">
+
+							<div id="g1" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g1"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M67,192L40,192A120,120,0,0,1,280,192L253,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g1)"></path><path fill="#f9aa01" stroke="none" d="M67,192L40,192A120,120,0,0,1,188.01344366270862,75.3156095522788L181.7104188385992,101.56959740301608A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g1)"></path><path fill="#8e8e93" stroke="#ffffff" d="M191.04440424481228,114.09464097326371L167.70752615526803,108.49195224072197L184.51176320487005,89.90115835824395Z" stroke-width="3" stroke-linecap="round" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="37.5" text-anchor="middle" font-family="TH Sarabun New" font-size="40px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 40px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">อุณหภูมิ</tspan></text><text x="160" y="188.23529411764707" text-anchor="middle" font-family="Arial" font-size="36px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 36px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">35</tspan></text><text x="160" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">องศาเซลเซียส</tspan></text><text x="53.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="266.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">60</tspan></text></svg></div>
+						</div>
+
+						<div class="box4x1">
+
+							<div id="g2" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g2"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M67,192L40,192A120,120,0,0,1,280,192L253,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g2)"></path><path fill="#fa8c01" stroke="none" d="M67,192L40,192A120,120,0,0,1,214.4788599687456,85.07921709739587L202.22111647577785,109.1363932504818A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g2)"></path><path fill="#8e8e93" stroke="#ffffff" d="M208.3732897686428,123.49434448924004L186.98913318812197,112.59857249549091L207.6690024726524,98.44431496022139Z" stroke-width="3" stroke-linecap="round" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="37.5" text-anchor="middle" font-family="TH Sarabun New" font-size="40px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 40px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ความชื้น</tspan></text><text x="160" y="188.23529411764707" text-anchor="middle" font-family="Arial" font-size="36px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 36px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">65</tspan></text><text x="160" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">เปอร์เซ็นต์</tspan></text><text x="53.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="266.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">100</tspan></text></svg></div>
+						</div>
+
+						<div class="box4x1">
+							<div id="g3" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g3"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M67,192L40,192A120,120,0,0,1,280,192L253,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g3)"></path><path fill="#a9d60a" stroke="none" d="M67,192L40,192A120,120,0,0,1,40.00284012537679,191.1743959640843L67.00220109716702,191.36015687216533A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g3)"></path><path fill="#8e8e93" stroke="#ffffff" d="M77.08452482364386,179.42924122102934L76.91940401646072,203.42867319595396L55.00248510970469,191.27759646857376Z" stroke-width="3" stroke-linecap="round" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="37.5" text-anchor="middle" font-family="TH Sarabun New" font-size="40px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 40px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ความเข้มแสง</tspan></text><text x="160" y="188.23529411764707" text-anchor="middle" font-family="Arial" font-size="36px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 36px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">657</tspan></text><text x="160" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ลักซ์</tspan></text><text x="53.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="266.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">300000</tspan></text></svg></div>
+						</div>
+
+						<div class="box4x1">
+							<div id="g4" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g4"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M67,192L40,192A120,120,0,0,1,280,192L253,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g4)"></path><path fill="#c8d107" stroke="none" d="M67,192L40,192A120,120,0,0,1,62.03928991393792,122.69127558932789L84.0804496833019,138.2857385817291A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g4)"></path><path fill="#8e8e93" stroke="#ffffff" d="M99.17471463154094,134.26539460734557L85.31296974940652,153.857536624558L74.28437867469569,131.3548661406619Z" stroke-width="3" stroke-linecap="round" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="37.5" text-anchor="middle" font-family="TH Sarabun New" font-size="40px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 40px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ปริมาณฝุ่น PM2.5</tspan></text><text x="160" y="188.23529411764707" text-anchor="middle" font-family="Arial" font-size="36px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 36px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">49</tspan></text><text x="160" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ไมโครกรัมต่อลูกบาศ์กเมตร</tspan></text><text x="53.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="266.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">250</tspan></text></svg></div>
+						</div>
+					</div>
+
+					<div ng-controller="firebaseCtrl" class="ng-scope">
+						<div class="box4x2">
+							<h1 id=""></h1>
+							<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">อุณหภูมิ</h4>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(องศาเซลเซียส)</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="temp_cur">ปัจจุบัน : 34.5</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="temp_mean">ค่าเฉลี่ย : 11632233.10</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="temp_min">ค่าน้อยสุด : 21.00</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="temp_max">ค่ามากสุด : 429496704.00</h5>
+						</div>
+
+						<div class="box4x2">
+							<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">ความชื้น</h4>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(เปอร์เซ็นต์)</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="hum_cur">ปัจจุบัน : 65</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="hum_mean">ค่าเฉลี่ย : 63.85</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="hum_min">ค่าน้อยสุด : 0.00</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="hum_max">ค่ามากสุด : 255.00</h5>
+						</div>
+
+						<div class="box4x2">
+							<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">ความเข้มแสง</h4>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(ลักซ์)</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="light_cur">ปัจจุบัน : 657</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="light_mean">ค่าเฉลี่ย : 102217.95</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="light_min">ค่าน้อยสุด : 0.00</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="light_max">ค่ามากสุด : 1677695.62</h5>
+						</div>
+
+						<div class="box4x2">
+							<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">ปริมาณฝุ่น PM2.5</h4>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(ไมโครกรัมต่อลูกบาศ์กเมตร)</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pm_cur">ปัจจุบัน : 49</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pm_mean">ค่าเฉลี่ย : 4909.80</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pm_min">ค่าน้อยสุด : 0.00</h5>
+							<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pm_max">ค่ามากสุด : 16962.00</h5>
+						</div>
+					</div>
+				</div>
+				<div class="boxspace"></div>
+				<!-- <button type="button" id="gauge_refresh">Refresh Gauges</button> -->
+				<div style="background-color: white;">
+					<div class="box4x1">
+						<div id="g5" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g5"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M67,192L40,192A120,120,0,0,1,280,192L253,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g5)"></path><path fill="none" stroke="none" d="M67,192L40,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g5)"></path><path fill="#8e8e93" stroke="#ffffff" d="Z" stroke-width="3" stroke-linecap="round" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="37.5" text-anchor="middle" font-family="TH Sarabun New" font-size="40px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 40px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ความกดอากาศ</tspan></text><text x="160" y="188.23529411764707" text-anchor="middle" font-family="Arial" font-size="36px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 36px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">NaN</tspan></text><text x="160" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">เฮกโตปาสกาล</tspan></text><text x="53.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">300</tspan></text><text x="266.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">1100</tspan></text></svg></div>
+					</div>
+
+					<div class="box4x1">
+						<div id="g6" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g6"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M67,192L40,192A120,120,0,0,1,280,192L253,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g6)"></path><path fill="#a9d70b" stroke="none" d="M67,192L40,192A120,120,0,0,1,40,191.99999999999997L67,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g6)"></path><path fill="#8e8e93" stroke="#ffffff" d="M77,180L77,204L55,191.99999999999997Z" stroke-width="3" stroke-linecap="round" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="37.5" text-anchor="middle" font-family="TH Sarabun New" font-size="40px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 40px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ปริมาณน้ำฝน</tspan></text><text x="160" y="188.23529411764707" text-anchor="middle" font-family="Arial" font-size="36px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 36px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="160" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">มิลลิเมตร</tspan></text><text x="53.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="266.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">999</tspan></text></svg></div>
+					</div>
+
+					<div class="box4x1">
+						<div id="g7" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g7"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M67,192L40,192A120,120,0,0,1,280,192L253,192A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g7)"></path><path fill="#cfcf06" stroke="none" d="M67,192L40,192A120,120,0,0,1,72.52376470943064,109.85434728855734L92.20591764980874,128.33711914863193A93,93,0,0,0,67,192Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g7)"></path><path fill="#8e8e93" stroke="#ffffff" d="M107.71016919516713,126.43496667886188L91.28103865287859,143.93021373697576L83.4582941207518,120.12255387748766Z" stroke-width="3" stroke-linecap="round" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="37.5" text-anchor="middle" font-family="TH Sarabun New" font-size="40px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 40px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ความเร็วลม</tspan></text><text x="160" y="188.23529411764707" text-anchor="middle" font-family="Arial" font-size="36px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 36px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">12</tspan></text><text x="160" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">เมตรต่อวินาที</tspan></text><text x="53.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="266.5" y="211.69683257918552" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">50</tspan></text></svg></div>
+					</div>
+
+					<div class="box4x1">
+						<div id="g8" class="gauge"><svg height="100%" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: hidden; position: relative; top: -0.359375px;"><desc style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">Created with Raphaël 2.1.4</desc><defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><filter id="inner-shadow-g8"><feoffset dx="0" dy="3"></feoffset><fegaussianblur result="offset-blur" stdDeviation="5"></fegaussianblur><fecomposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"></fecomposite><feflood flood-color="black" flood-opacity="0.2" result="color"></feflood><fecomposite operator="in" in="color" in2="inverse" result="shadow"></fecomposite><fecomposite operator="over" in="shadow" in2="SourceGraphic"></fecomposite></filter></defs><path fill="#edebeb" stroke="none" d="M95.88571428571427,123.07692307692308L74.28571428571428,123.07692307692308A85.71428571428572,85.71428571428572,0,0,1,245.71428571428572,123.07692307692308A85.71428571428572,85.71428571428572,0,0,1,74.28571428571428,123.0769230769231L95.88571428571427,123.0769230769231A64.11428571428573,64.11428571428573,0,0,0,224.11428571428573,123.07692307692308A64.11428571428573,64.11428571428573,0,0,0,95.88571428571427,123.07692307692308Z" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g8)"></path><path fill="#edebeb" stroke="none" d="M95.88571428571427,123.07692307692308L74.28571428571428,123.07692307692308A85.71428571428572,85.71428571428572,0,0,1,245.71428571428572,123.07692307692308A85.71428571428572,85.71428571428572,0,0,1,167.47049223551355,208.46504005621557L165.58792819216413,186.94723457743387A64.11428571428573,64.11428571428573,0,0,0,224.11428571428573,123.07692307692308A64.11428571428573,64.11428571428573,0,0,0,95.88571428571427,123.07692307692308Z" transform="matrix(0,1,-1,0,283.0769,-36.9231)" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" filter="url(#inner-shadow-g8)"></path><path fill="#8e8e93" stroke="#ffffff" d="M152.7620343875866,178.0311565094883L176.6707071417885,175.93941868354455L166.16315609429867,193.5221195848394Z" stroke-width="3" stroke-linecap="round" transform="matrix(0,1,-1,0,283.0769,-36.9231)" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); stroke-linecap: round;"></path><text x="160" y="21.818181818181817" text-anchor="middle" font-family="TH Sarabun New" font-size="24px" stroke="none" fill="#505050" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: &quot;TH Sarabun New&quot;; font-size: 24px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">ทิศเหนือ</tspan></text><text x="160" y="129.7297297297297" text-anchor="middle" font-family="Arial" font-size="44px" stroke="none" fill="#010101" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 44px; font-weight: bold; fill-opacity: 1;" font-weight="bold" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">265</tspan></text><text x="160" y="144.7297297297297" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 1;" font-weight="normal" fill-opacity="1"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">องศา</tspan></text><text x="74.8" y="144.7297297297297" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 0;" font-weight="normal" fill-opacity="0"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">0</tspan></text><text x="245.2" y="144.7297297297297" text-anchor="middle" font-family="Arial" font-size="15px" stroke="none" fill="#b3b3b3" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-anchor: middle; font-family: Arial; font-size: 15px; font-weight: normal; fill-opacity: 0;" font-weight="normal" fill-opacity="0"><tspan dy="0" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">360</tspan></text></svg></div>
+					</div>
+				</div>
+				<div class="box4x2">
+					<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">ความกดอากาศ</h4>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(ปาสกาล)</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pressure_cur">ปัจจุบัน : [object Object]</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pressure_mean">ค่าเฉลี่ย : 999.46</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pressure_min">ค่าน้อยสุด : 0.00</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="pressure_max">ค่ามากสุด : 7864.70</h5>
+				</div>
+
+				<div class="box4x2">
+					<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">ปริมาณน้ำฝน</h4>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(ลูกบาศ์กเมตรต่อวินาที)</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="rain_cur">ปัจจุบัน : 0</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="rain_mean">ค่าเฉลี่ย : 417.32</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="rain_min">ค่าน้อยสุด : 0.00</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="rain_max">ค่ามากสุด : 57976.00</h5>
+				</div>
+
+				<div class="box4x2">
+					<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">ความเร็วลม</h4>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(เมตรต่อวินาที)</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wspeed_cur">ปัจจุบัน : 12</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wspeed_mean">ค่าเฉลี่ย : 4.35</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wspeed_min">ค่าน้อยสุด : 0.00</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wspeed_max">ค่ามากสุด : 34.72</h5>
+				</div>
+
+				<div class="box4x2">
+					<h4 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;font-size: 1.5em;color:#505050">ทิศทางลม</h4>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050">(องศา)</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wdir_cur">ปัจจุบัน : 265</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wdir_mean">ค่าเฉลี่ย : 196.94</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wdir_min">ค่าน้อยสุด : 0.00</h5>
+					<h5 style="text-align:center;font-family: &#39;Sarabun&#39;, sans-serif;color:#505050" id="wdir_max">ค่ามากสุด : 511.00</h5>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+    <script src="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/raphael-2.1.4.min.js.download"></script>
+    <script src="./หน้าหลัก สถานีตรวจวัดอากาศ คณะเทคโนโลยีดิจิทัล สถาบันเทคโนโลยีจิตรลดา_files/justgage.js.download"></script>
+		<script>
+			function notavailable() {
+			alert("This function is not available yet.");}
+		</script>
+
+		<script>
+					document.addEventListener("DOMContentLoaded", function(event) {
+
+      	var g1 = new JustGage({
+        id: 'g1',
+        value: 30,
+        title: "อุณหภูมิ",
+        titleFontColor : "#505050",
+        label: "องศาเซลเซียส",
+		titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 0,
+        max: 60,
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+      	var g2 = new JustGage({
+        id: 'g2',
+        value: 50,
+        title: "ความชื้น",
+        titleFontColor : "#505050",
+         label: "เปอร์เซ็นต์",
+         titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 0,
+        max: 100,
+
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+        var g3 = new JustGage({
+        id: 'g3',
+        value: 1500,
+        title: "ความเข้มแสง",
+        titleFontColor : "#505050",
+         label: "ลักซ์",
+         titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 0,
+        max: 300000,
+
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+        var g4 = new JustGage({
+        id: 'g4',
+        titleFontColor : "#505050",
+        value: 125,
+        title: "ปริมาณฝุ่น PM2.5",
+         label: "ไมโครกรัมต่อลูกบาศ์กเมตร",
+         titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 0,
+        max: 250,
+
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+      var g5 = new JustGage({
+        id: 'g5',
+        titleFontColor : "#505050",
+        value: 700,
+        title: "ความกดอากาศ",
+         label: "เฮกโตปาสกาล",
+         titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 300,
+        max: 1100,
+
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+      var g6 = new JustGage({
+        id: 'g6',
+        value: 500,
+        titleFontColor : "#505050",
+        title: "ปริมาณน้ำฝน",
+         label: "มิลลิเมตร",
+         titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 0,
+        max: 999,
+
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+      var g7 = new JustGage({
+        id: 'g7',
+        value: 25,
+        title: "ความเร็วลม",
+        titleFontColor : "#505050",
+         label: "เมตรต่อวินาที",
+         titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 0,
+        max: 50,
+
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+      var g8 = new JustGage({
+        id: 'g8',
+        value: 180,
+        title: "ทิศเหนือ",
+        donut: true,
+        levelColors : ["#edebeb","#edebeb" ,"#edebeb"],
+        titleFontColor : "#505050",
+         label: "องศา",
+         titleMinFontSize: 40,
+        titleFontFamily: "TH Sarabun New",
+        min: 0,
+        max: 360,
+
+        pointer: true,
+        pointerOptions: {
+          toplength: -15,
+          bottomlength: 10,
+          bottomwidth: 12,
+          color: '#8e8e93',
+          stroke: '#ffffff',
+          stroke_width: 3,
+          stroke_linecap: 'round'
+        },
+        gaugeWidthScale: 0.6,
+        counter: true
+      });
+			function notavailable() {
+  				alert("This function is not available yet.");
+			}
+
+			 document.getElementById('section1').addEventListener('mousemove', function() {
+        g1.refresh(temp_curf);
+        g2.refresh(hum_curf);
+        g3.refresh(light_curf);
+        g4.refresh(pm_curf);
+        g5.refresh(pressure_curf);
+        g6.refresh(rain_curf);
+        g7.refresh(wspeed_curf);
+        g8.refresh(wdir_curf);
+      });
+    });
+
+		
+		
+
+
+ 		</script>
+	
+</body></html>
