@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <title>WASA</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="cssIndex.css">
+    <link rel="stylesheet" href="cssRecords.css">
+    <link rel="stylesheet" href="cssaAllabout.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Gwendolyn&display=swap" rel="stylesheet">   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    
+</head>
+<body>
+     <!-- navigation bar -->
+     <nav class="navbar navbar-dark bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" id = "brand" href="#">
+            <img src="/assets/logo.png" alt="" width="80" class="d-inline-block align-text-center">
+            Wind and Sun Assistant
+            </a>
+            <button type="button" class="btn btn-outline-light btn-lg" id="login-button">Login</button>
+        </div>
+    </nav>
+    
+    <!-- side bar -->
+    <div class="w3-sidebar w3-bar-block w3-border-right" style="display:none" id="mySidebar">
+        <button onclick="w3_close()" class="w3-bar-item w3-large">Close &times;</button>
+        <a href="Records.html" class="w3-bar-item w3-button">Records</a>
+        <a href="#" class="w3-bar-item w3-button">Inferences</a>
+        <a href="#" class="w3-bar-item w3-button">About us</a>
+        <a href="#" class="w3-bar-item w3-button">Log out</a>
+    </div>
+    <div>
+        <button class="w3-button w3-blue w3-xlarge" onclick="w3_open()">☰ Menu</button>
+    </div>
+
+    <!-- Slideshow container -->
+    <div class="w3-content w3-display-container">
+        <img class="mySlides" src="assets/cover.png" style="width:100%">
+        <img class="mySlides" src="assets/from.png" style="width:100%">
+        <img class="mySlides" src="assets/importance.png" style="width:100%">
+        <img class="mySlides" src="assets/sensor.png" style="width:100%">
+        <img class="mySlides" src="assets/board.png" style="width:100%">
+        <img class="mySlides" src="assets/teamself_name.png" style="width:100%">
+        
+        <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+        <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+      </div>
+      
+    <!-- js for sidebar -->
+    <script>
+        function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+        }
+        function w3_close() {
+            document.getElementById("mySidebar").style.display = "none";
+        }
+    </script>
+     <!-- ---------------------- -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+     <!-- ---------------------- -->
+     <script>
+        var slideIndex = 1;
+        showDivs(slideIndex);
+        
+        function plusDivs(n) {
+          showDivs(slideIndex += n);
+        }
+        
+        function showDivs(n) {
+          var i;
+          var x = document.getElementsByClassName("mySlides");
+          if (n > x.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = x.length}
+          for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";  
+          }
+          x[slideIndex-1].style.display = "block";  
+        }
+        </script>
+</body>
+</html>
