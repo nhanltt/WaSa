@@ -50,58 +50,66 @@
 
         <div class="">
             <div class="column infor">
-                <p id='inten'>Current sun intensity: </p>
-                <p id='min_inten'>Maximun sun intensity: </p>
-                <p id='max_inten'>Minimun sun intensity: </p>
-                <p id='avg_inten'>Average sun intensity: </p>
+                <div class="infor__detail">
+                    <p id='inten'>Current sun intensity: </p>
+                    <p id='min_inten'>Maximun sun intensity: </p>
+                    <p id='max_inten'>Minimun sun intensity: </p>
+                    <p id='avg_inten'>Average sun intensity: </p>
+                </div>
             </div>
 
             <div class="column infor">
-                <p id='speed'>Current wind speed: </p>
-                <p id='min_speed'>Maximun wind speed: </p>
-                <p id='max_speed'>Minimun wind speed: </p>
-                <p id='avg_speed'>Average wind speed: </p>
-            </div>
-        </div>
-        <div ng-controller="firebaseCtrl" class="container">
-            <div class="">
-                <div class="column">
-                    <div id="g3" class="gauge"></div>
-                </div>
-                <!-- compass  -->
-                <div class="container__compass compass column">
-
-                    <div id="rose" class="compass__rose">
-                    <svg class="compass__rose__dial" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="65" cy="65" r="56" stroke="black" stroke-width="1" fill="none" />
-                        <polyline points="63,9  67,9  65,13" fill="black"/>
-                        <polyline points="121,63  121,67  119,65" fill="black"/>
-                        <polyline points="63,121  67,121  65,119" fill="black"/>
-                        <polyline points="9,63  9,67  11,65" fill="black"/>
-                        <text x="65" y="4.2" font-size="5" text-anchor="middle" fill="black">N</text>
-                        <text x="127" y="67" font-size="5" text-anchor="middle" fill="black">E</text>
-                        <text x="65" y="129" font-size="5" text-anchor="middle" fill="black">S</text>
-                        <text x="2.8" y="67" font-size="5" text-anchor="middle" fill="black">W</text>
-                    </svg>
-                    </div>
-            
-                    <svg class="compass__pointer" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <polyline points="60,60  70,60  65,15" fill="#b60000"/>
-                    <polyline points="60,70  70,70  65,115" fill="blue"/>
-                    <circle cx="65" cy="65" r="7" stroke="#b60000" stroke-width="7" fill="none" />
-                    </svg>
-                </div>
-                
-                <div class="column">
-                    <p id='sun_angle'>Current sun angle: <br> with East</p>
-                </div> 
-
-                <div class="column">
-                    <p id="wind_dir">Wind from: </p>
+                <div class="infor__detail">
+                    <p id='speed'>Current wind speed: </p>
+                    <p id='min_speed'>Maximun wind speed: </p>
+                    <p id='max_speed'>Minimun wind speed: </p>
+                    <p id='avg_speed'>Average wind speed: </p>
                 </div>
             </div>
         </div>
-           
+    </div>
+
+    <div ng-controller="firebaseCtrl" class="container content part2">
+        <div class="sun_ang">
+            <div class="column">
+                <div id="g3" class="gauge"></div>
+            </div>
+            <!-- compass  -->
+            <div class="container__compass compass column">
+
+                <div id="rose" class="compass__rose">
+                <svg class="compass__rose__dial" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="65" cy="65" r="56" stroke="black" stroke-width="1" fill="none" />
+                    <polyline points="63,9  67,9  65,13" fill="black"/>
+                    <polyline points="121,63  121,67  119,65" fill="black"/>
+                    <polyline points="63,121  67,121  65,119" fill="black"/>
+                    <polyline points="9,63  9,67  11,65" fill="black"/>
+                    <text x="65" y="4.2" font-size="5" text-anchor="middle" fill="black">N</text>
+                    <text x="127" y="67" font-size="5" text-anchor="middle" fill="black">E</text>
+                    <text x="65" y="129" font-size="5" text-anchor="middle" fill="black">S</text>
+                    <text x="2.8" y="67" font-size="5" text-anchor="middle" fill="black">W</text>
+                </svg>
+                </div>
+        
+                <svg class="compass__pointer" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="60,60  70,60  65,15" fill="#b60000"/>
+                <polyline points="60,70  70,70  65,115" fill="blue"/>
+                <circle cx="65" cy="65" r="7" stroke="#b60000" stroke-width="7" fill="none" />
+                </svg>
+            </div>
+        </div>
+        <div>
+            <div class="column infor">
+                <div class="infor__detail">
+                    <p id='sun_angle'>Current sun angle: </p>
+                    <p>with East</p>
+                </div>
+            </div> 
+
+            <div class="column infor">
+                <p id="wind_dir" class="infor__detail">Wind from: </p>
+            </div>
+        </div>
     </div>
 
     <!-- js for sidebar -->
@@ -132,7 +140,6 @@
                 titleFontColor: "black",
                 titleFontFamily: "Courier",
                 titlePosition: "below",
-                // titleMinFontSize: 40,
                 valueMinFontSize: 5,
                 valueFontColor: "black",
                 valueFontFamily: "Courier",

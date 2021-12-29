@@ -50,7 +50,7 @@ angular.module('firebaseApp', []).service('firebaseService', function() {
             document.getElementById('min_inten').innerHTML ="Minimum sun intensity: " + min_brt;
 
             var sun_angle = (id - 1) * 45;
-            document.getElementById('sun_angle').innerHTML ="Current sun intensity: " + sun_angle + " deg \n from East";
+            document.getElementById('sun_angle').innerHTML ="Current sun intensity: " + sun_angle + " deg";
             g3.refresh(sun_angle);
 
             var w_dir = ['North', 'Northeast by north', 'Northeast', 'Northeast by east', 'East', 'Southeast by east', 'Southeast', 'Southeast by south', 'South', 'Southwest by south', 'Southwest', 'Southwest by west', 'West', 'Northwest by west', 'Northwest', 'Northwest by north']
