@@ -1,0 +1,124 @@
+.w3-bar-item {
+    font-size: 20px;
+    color: #6d09cd;
+}
+.gauge {
+    width: 450px;
+    height: 400px;
+    margin-left: 30px;
+}
+/* .container.content.ng-scope {
+  background-color: beige;
+  width: 100%;
+  height: 100%;
+} */
+.container.content {
+  width: 1200px;
+  height: 100%;
+  margin-left: 300px !important;
+  background-color: rgba(188, 191, 194,  20%);
+}
+  .container.content.part2 {
+    margin-top: 50px;
+  }
+
+  
+.column {
+  float: left;
+  margin-right: 60px;
+  margin-left: 60px;
+  width: 450px;
+  height: 450px;
+  font-size: 20px;
+  text-align: center;
+  align-items: center;
+}
+  .column.infor {
+      width: 450px;
+      height: 280px;
+      margin-top: 10px;
+      background-color: rgb(133 197 131 / 30%);
+    }
+    .infor__detail {
+      margin-top: 50px;
+      font-family: Courier;
+      font-size: 20px;
+      color: black;
+      font-weight: bold;
+    }
+
+a:link.button,
+a:active.button,
+a:visited.button,
+a:hover.button {
+    margin: 30px 5px 0 2px;
+    padding: 7px 13px;
+}
+
+:root {
+    --element-angle: 0;
+  }
+
+.container__compass {
+  overflow: hidden;
+  height: 200px;
+  width:200px;
+  transition: -webkit-transform 0.5s ease-out 0s;
+  transition: transform 0.5s ease-out 0s;
+}
+  
+  .compass {
+    position: relative;
+    width: 450px;
+    height: 450px;
+    text-align: center;
+  }
+  
+    .compass__rose {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  
+      .compass__rose__dial {
+        height: 100%;
+        width: 100%;
+      }
+  
+    .compass__pointer {
+      height: 100%;
+      width: 100%;
+      -webkit-transform:rotate(calc(var(--element-angle) * 1deg));
+      -moz-transform:rotate(calc(var(--element-angle) * 1deg));
+      -o-transform:rotate(calc(var(--element-angle) * 1deg));
+      -ms-transform:rotate(calc(var(--element-angle) * 1deg));
+    
+      -moz-transition: all 1s ease;
+      -webkit-transition: all 1s ease;
+      -o-transition: all 1s ease;
+      transition: all 1s ease;
+    }
+html.nightmode {
+    background: black;
+    color: white;
+}  
+
+html.nightmode .container {
+    transform: translateY(-2rem);
+    -webkit-transform: translateY(-2rem);
+}
+
+html.nightmode header {
+    transform: translateY(-4rem);
+    -webkit-transform: translateY(-4rem);
+}
+
+html.nightmode .label {
+    color: rgba(127, 127, 127, 0.8);
+}
+
+html.nightmode .btn svg * {
+    fill: rgba(127, 127, 127, 0.5);
+}  
