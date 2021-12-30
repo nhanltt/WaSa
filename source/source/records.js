@@ -7,9 +7,9 @@ angular.module('firebaseApp', []).service('firebaseService', function() {
     // สร้าง Function เพื่อ init Firebase เข้ากับ app เรา
     this.initFirebase = function() {
         var config = {
-            apiKey: "AIzaSyDDp-TZedDdUaBg4SmiJcN0AQs5LUM1g7k",
-            authDomain: "helloworld-f400c.firebaseapp.com",
-            databaseURL: "https://helloworld-f400c-default-rtdb.asia-southeast1.firebasedatabase.app/"
+            apiKey: "AIzaSyCeEj8V42ub7iu1T3_XyL38EvO07dzwfOI",
+            authDomain: "project-dev2-4f780.firebaseapp.com",
+            databaseURL: "https://project-dev2-4f780-default-rtdb.asia-southeast1.firebasedatabase.app/"
         };
         firebase.initializeApp(config);
         firebaseRef = firebase.database().ref("Set"); 
@@ -86,7 +86,8 @@ angular.module('firebaseApp', []).service('firebaseService', function() {
                 sum += datas_wsp[i];
             }
             avg_wsp = (sum/n);
-            avg_wsp = Number((((1024 - avg_wsp)/1024)*100).toFixed(2))
+            avg_wsp = Number(avg_wsp.toFixed(2));
+            console.log(avg_wsp);
             document.getElementById('avg_speed').innerHTML ="Average wind speed: " + avg_wsp;
         })
     }
